@@ -16,6 +16,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "get_thumbnail"
         ]
 
+
 class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
@@ -23,4 +24,17 @@ class TeamSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "logo"
+        ]
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    products = ProductSerializer(many=True)
+
+    class Meta:
+        model = Category
+        fields = [
+            "id",
+            "name",
+            "products",
+            "get_absolute_url",
         ]
