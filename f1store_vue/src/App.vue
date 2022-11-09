@@ -1,4 +1,9 @@
 <template>
+  <head>
+    <meta charset="utf-8">
+    <link rel="shortcut icon" type="image/png" href="favicon.png"/>
+  </head>
+
   <div id="wrapper">
     <nav class="navbar is-dark">
       <div class="navbar-brand">
@@ -32,11 +37,16 @@
           </div>
           <router-link to="/clothing" class="navbar-item"><strong>Clothing</strong></router-link>
           <router-link to="/accessories" class="navbar-item"><strong>Accessories</strong></router-link>
+          <router-link to="/teams" class="navbar-item"><strong>Shop by Team</strong></router-link>
 
           <div class="navbar-item">
             <div class="buttons">
-              <router-link to="/login" class="button is-light"><strong>Log In</strong></router-link>
-
+              <template v-if="$store.state.isAuthenticated">
+                <router-link to="/my-account" class="button is-light">My account</router-link>
+              </template>
+              <template v-else>
+                <router-link to="/login" class="button is-light"><strong>Log In</strong></router-link>
+              </template>
               <router-link to="/cart" class="button is-success">
                 <span class="icon"><i class="fas fa-shopping-cart"></i></span>
                 <span>Cart ({{ cartTotalLength }})</span>
@@ -62,6 +72,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   data() {
     return {
@@ -73,6 +84,14 @@ export default {
   },
   beforeCreate() {
     this.$store.commit('initializeStore')
+
+    const token = this.$store.state.token
+    if (token) {
+        axios.defaults.headers.common['Authorization'] = "Token " + token
+    } else {
+        axios.defaults.headers.common['Authorization'] = ""
+    }
+    
   },
   mounted() {
     this.cart = this.$store.state.cart

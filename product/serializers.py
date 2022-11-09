@@ -18,12 +18,17 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class TeamSerializer(serializers.ModelSerializer):
+    # products = ProductSerializer(many=True)
+
     class Meta:
         model = Team
         fields = [
             "id",
             "name",
-            "logo"
+            # "products",
+            "get_absolute_url",
+            "get_image",
+            "get_thumbnail",
         ]
 
 

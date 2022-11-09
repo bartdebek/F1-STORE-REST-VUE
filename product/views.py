@@ -24,6 +24,29 @@ class TeamsListView(APIView):
         return Response(serializer.data)
 
 
+class TeamsProductsView(APIView):
+
+    def get(self, request, team_slug, format=None):
+        products = Product.objects.filter(team__slug=team_slug)
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data)
+        
+
+# class TeamProductDetailView(APIView):
+
+#     def get_object(self, team_slug, product_slug):
+#         try:
+#             return Product.objects.filter(team__slug=team_slug).get(slug=product_slug)
+#         except Product.DoesNotExist:
+#             raise Http404
+    
+#     def get(self, request, team_slug, product_slug, format=None):
+#         product = self.get_object(team_slug, product_slug)
+#         serializer = ProductSerializer(product)
+#         return Response(serializer.data)
+
+
+
 class ProductDetailView(APIView):
 
     def get_object(self, category_slug, product_slug):
