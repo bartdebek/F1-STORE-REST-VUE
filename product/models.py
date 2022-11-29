@@ -23,8 +23,8 @@ class Category(models.Model):
 
 class Team(models.Model):
     name = models.CharField(max_length=255)
-    image = models.ImageField(upload_to='images/teams/', blank=True, null=True)
-    thumbnail = models.ImageField(upload_to='images/teams/', blank=True, null=True)
+    image = models.ImageField(storage=PublicMediaStorage(), blank=True, null=True)
+    thumbnail = models.ImageField(storage=PublicMediaStorage(), blank=True, null=True)
     slug = models.SlugField()
 
     class Meta:
