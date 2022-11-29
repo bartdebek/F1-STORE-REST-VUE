@@ -30,7 +30,7 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
-DEVELOPMENT_MODE = True
+DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
 
 STRIPE_SECRET_KEY = 'sk_test_51M9FBBHResVY53M8xlH5qKlAOJK8kxzCdzNTTvs0BRpXs5uCNuxDdfNBUarjDUZJKNeb8E5C4HvfvweDX8uaM53e00D01YoehX'
 
@@ -60,11 +60,13 @@ CORS_ALLOWED_ORIGINS = [
     "https://sub.example.com",
     "http://localhost:8080",
     "http://127.0.0.1:9000",
+    "https://wonderful-donut-3e6c89.netlify.app/",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:9000",
+    "https://wonderful-donut-3e6c89.netlify.app/",
 ]
 
 MIDDLEWARE = [
