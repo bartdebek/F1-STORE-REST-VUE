@@ -2,7 +2,8 @@
     <div class="page-category">
         <div class="columns is-multiline">
             <div class="column is-12">
-                <h2 class="is-size-2 has-text-centered">Products</h2>
+                <h2 v-if="teamProducts.length===1" class="is-size-2 has-text-centered">{{ teamProducts.length }} Product</h2>
+                <h2 v-else class="is-size-2 has-text-centered">{{ teamProducts.length }} Products</h2>
             </div>
 
             <ProductBox 

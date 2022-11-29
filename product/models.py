@@ -51,16 +51,14 @@ class Team(models.Model):
             else:
                 return ''
 
-    def make_thumbnail(self, image, size=(300,200)):
-        img = Image.open(image)
-        img.convert('RGB')
-        img.thumbnail(size)
-
+    def make_thumbnail(self, image, heigth=200):
+        img = Image.open(self.image)
+        hpercent = (heigth/float(img.size[1]))
+        wsize = int((float(img.size[0])*float(hpercent)))
+        img = img.resize((wsize,heigth), Image.Resampling.LANCZOS)
         thumb_io = BytesIO()
-        img.save(thumb_io, 'JPEG', quality=85)
-
-        thumbnail = File(thumb_io, name=image.name)
-
+        img.save(thumb_io, 'JPEG')
+        thumbnail = File(thumb_io, name=self.image.name)
         return thumbnail
 
 
@@ -102,14 +100,12 @@ class Product(models.Model):
             else:
                 return ''
 
-    def make_thumbnail(self, image, size=(300,200)):
-        img = Image.open(image)
-        img.convert('RGB')
-        img.thumbnail(size)
-
+    def make_thumbnail(self, image, heigth=200):
+        img = Image.open(self.image)
+        hpercent = (heigth/float(img.size[1]))
+        wsize = int((float(img.size[0])*float(hpercent)))
+        img = img.resize((wsize,heigth), Image.Resampling.LANCZOS)
         thumb_io = BytesIO()
-        img.save(thumb_io, 'JPEG', quality=85)
-
-        thumbnail = File(thumb_io, name=image.name)
-
+        img.save(thumb_io, 'JPEG')
+        thumbnail = File(thumb_io, name=self.image.name)
         return thumbnail

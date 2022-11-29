@@ -64,7 +64,7 @@ const routes = [
     }
   },
   {
-    path: '/signup',
+    path: '/sign-up',
     name: 'SignUp',
     component: SignUp
   },

@@ -25,6 +25,14 @@
                     <td>${{ getItemTotal(item).toFixed(2) }}</td>
                 </tr>
             </tbody>
+            <tbody>
+                <tr>
+                    <th>Total amount</th>
+                    <th></th>
+                    <th></th>
+                    <th>${{ order.paid_amount }}</th>
+                </tr>
+            </tbody>
         </table>
     </div>
 </template>
