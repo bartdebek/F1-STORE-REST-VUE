@@ -79,7 +79,7 @@ export default {
                     password: this.password
                 }
                 axios
-                    .post("https://orca-app-kgbd6.ondigitalocean.app/api/v1/users/", formData)
+                    .post("api/api/v1/users/", formData)
                     .then(response => {
                         toast({
                             message: 'Account created, please log in!',

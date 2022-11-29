@@ -30,7 +30,7 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
-DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
+DEVELOPMENT_MODE = True
 
 STRIPE_SECRET_KEY = 'sk_test_51M9FBBHResVY53M8xlH5qKlAOJK8kxzCdzNTTvs0BRpXs5uCNuxDdfNBUarjDUZJKNeb8E5C4HvfvweDX8uaM53e00D01YoehX'
 

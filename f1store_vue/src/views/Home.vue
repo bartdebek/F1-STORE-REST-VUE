@@ -49,7 +49,7 @@ export default {
       this.$store.commit('setIsLoading', true)
 
       await axios
-        .get('https://orca-app-kgbd6.ondigitalocean.app/api/v1/latest-products/')
+        .get('api/api/v1/latest-products/')
         .then(response => {
           this.latestProducts = response.data
           document.title = 'Home | F1 Store'

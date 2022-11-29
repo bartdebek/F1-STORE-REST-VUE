@@ -46,7 +46,7 @@ export default {
             const teamSlug = this.$route.params.team_slug
             this.$store.commit('setIsLoading', true)
             axios
-                .get(`https://orca-app-kgbd6.ondigitalocean.app/api/v1/products/teams/${teamSlug}/`)
+                .get(`api/api/v1/products/teams/${teamSlug}/`)
                 .then(response => {
                     this.teamProducts = response.data
                     document.title = teamSlug + ' | F1 Store'
