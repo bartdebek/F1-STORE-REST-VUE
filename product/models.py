@@ -36,18 +36,18 @@ class Team(models.Model):
 
     def get_image(self):
         if self.image:
-            return 'http://127.0.0.1:8000/' + self.image.url
+            return 'https://orca-app-kgbd6.ondigitalocean.app/' + self.image.url
         else:
             return ''
 
     def get_thumbnail(self):
         if self.thumbnail:
-            return 'http://127.0.0.1:8000/' + self.thumbnail.url
+            return 'https://orca-app-kgbd6.ondigitalocean.app/' + self.thumbnail.url
         else:
             if self.image:
                 self.thumbnail = self.make_thumbnail(self.image)
                 self.save()
-                return 'http://127.0.0.1:8000/' + self.thumbnail.url
+                return 'https://orca-app-kgbd6.ondigitalocean.app/' + self.thumbnail.url
             else:
                 return ''
 
@@ -85,18 +85,18 @@ class Product(models.Model):
 
     def get_image(self):
         if self.image:
-            return 'http://127.0.0.1:8000/' + self.image.url
+            return 'https://orca-app-kgbd6.ondigitalocean.app/' + self.image.url
         else:
             return ''
 
     def get_thumbnail(self):
         if self.thumbnail:
-            return 'http://127.0.0.1:8000/' + self.thumbnail.url
+            return 'https://orca-app-kgbd6.ondigitalocean.app/' + self.thumbnail.url
         else:
             if self.image:
                 self.thumbnail = self.make_thumbnail(self.image)
                 self.save()
-                return 'http://127.0.0.1:8000/' + self.thumbnail.url
+                return 'https://orca-app-kgbd6.ondigitalocean.app/' + self.thumbnail.url
             else:
                 return ''
 
@@ -109,3 +109,4 @@ class Product(models.Model):
         img.save(thumb_io, 'JPEG')
         thumbnail = File(thumb_io, name=self.image.name)
         return thumbnail
+        
