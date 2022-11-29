@@ -61,13 +61,13 @@ CORS_ALLOWED_ORIGINS = [
     "https://sub.example.com",
     "http://localhost:8080",
     "http://127.0.0.1:9000",
-    "https://wonderful-donut-3e6c89.netlify.app/",
+    "https://wonderful-donut-3e6c89.netlify.app",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:9000",
-    "https://wonderful-donut-3e6c89.netlify.app/",
+    "https://wonderful-donut-3e6c89.netlify.app",
 ]
 
 MIDDLEWARE = [
