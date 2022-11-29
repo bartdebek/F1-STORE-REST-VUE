@@ -38,7 +38,7 @@
         this.$store.commit('setIsLoading', true)
   
         await axios
-          .get('api/v1/products/teams/')
+          .get('https://orca-app-kgbd6.ondigitalocean.app/api/v1/products/teams/')
           .then(response => {
             this.teamList = response.data
             document.title = 'Teams | F1 Store'

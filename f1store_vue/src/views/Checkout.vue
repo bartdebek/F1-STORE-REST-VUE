@@ -210,7 +210,7 @@ export default {
                 'stripe_token': token.id
             }
             await axios
-                .post('/api/v1/checkout/', data)
+                .post('https://orca-app-kgbd6.ondigitalocean.app/api/v1/checkout/', data)
                 .then(response => {
                     this.$store.commit('clearCart')
                     this.$router.push('/cart/success')

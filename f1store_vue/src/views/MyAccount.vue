@@ -52,7 +52,7 @@ export default {
         async getMyOrders() {
             this.$store.commit('setIsLoading', true)
             await axios
-                .get('/api/v1/orders/')
+                .get('https://orca-app-kgbd6.ondigitalocean.app/api/v1/orders/')
                 .then(response => {
                     this.orders = response.data
                 })
