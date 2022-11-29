@@ -4,6 +4,8 @@ from PIL import Image
 from django.core.files import File
 from django.db import models
 
+from f1store.storage_backends import PublicMediaStorage
+
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
@@ -70,8 +72,8 @@ class Product(models.Model):
     slug = models.SlugField()
     description = models.TextField(blank=True, null=True)
     price = models.DecimalField(max_digits=6, decimal_places=2)
-    image = models.ImageField(upload_to='images/products/', blank=True, null=True)
-    thumbnail = models.ImageField(upload_to='images/products/', blank=True, null=True)
+    image = models.ImageField(storage=PublicMediaStorage(), blank=True, null=True)
+    thumbnail = models.ImageField(storage=PublicMediaStorage(), blank=True, null=True)
     date_added = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -85,18 +87,18 @@ class Product(models.Model):
 
     def get_image(self):
         if self.image:
-            return 'https://orca-app-kgbd6.ondigitalocean.app/' + self.image.url
+            return self.image.url
         else:
             return ''
 
     def get_thumbnail(self):
         if self.thumbnail:
-            return 'https://orca-app-kgbd6.ondigitalocean.app/' + self.thumbnail.url
+            return self.thumbnail.url
         else:
             if self.image:
                 self.thumbnail = self.make_thumbnail(self.image)
                 self.save()
-                return 'https://orca-app-kgbd6.ondigitalocean.app/' + self.thumbnail.url
+                return self.thumbnail.url
             else:
                 return ''
 
