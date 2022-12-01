@@ -13,26 +13,29 @@ import os
 import sys
 import dj_database_url
 from pathlib import Path
+from environs import Env
 
 from django.core.management.utils import get_random_secret_key
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Environs setup
+env = Env()
+env.read_env()
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
+SECRET_KEY = env("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", "False") == "True"
+DEBUG = env.bool("DJANGO_DEBUG", default=False)
 
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+ALLOWED_HOSTS = ['f1companion.herokuapp.com', 'localhost', '127.0.0.1']
 
-DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
-
-STRIPE_SECRET_KEY = 'sk_test_51M9FBBHResVY53M8xlH5qKlAOJK8kxzCdzNTTvs0BRpXs5uCNuxDdfNBUarjDUZJKNeb8E5C4HvfvweDX8uaM53e00D01YoehX'
+STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
 
 
 # Application definition
@@ -105,19 +108,10 @@ WSGI_APPLICATION = 'f1store.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-if DEVELOPMENT_MODE is True:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-        }
-    }
-elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
-    if os.getenv("DATABASE_URL", None) is None:
-        raise Exception("DATABASE_URL environment variable not defined")
-    DATABASES = {
-        "default": dj_database_url.parse(os.environ.get("DATABASE_URL")),
-    }
+DATABASES = {
+    "default": env.dj_db_url("DATABASE_URL", default="postgres://postgres@db/postgres")
+}
+
 
 
 # Password validation
@@ -160,28 +154,50 @@ REST_FRAMEWORK = {
     ),
 }
 
-USE_SPACES = os.getenv('USE_SPACES') == 'TRUE'
+STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-if USE_SPACES:
-    # settings
-    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-    AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
-    AWS_DEFAULT_ACL = 'public-read'
-    AWS_S3_ENDPOINT_URL = 'fra1.digitaloceanspaces.com'
+# The following configs determine if files get served from the server or an S3 storage
+S3_ENABLED = env.bool('S3_ENABLED', default=True)
+LOCAL_SERVE_MEDIA_FILES = env.bool('LOCAL_SERVE_MEDIA_FILES', default=not S3_ENABLED)
+LOCAL_SERVE_STATIC_FILES = env.bool('LOCAL_SERVE_STATIC_FILES', default=not S3_ENABLED)
+
+if (not LOCAL_SERVE_MEDIA_FILES or not LOCAL_SERVE_STATIC_FILES) and not S3_ENABLED:
+    raise ValueError('S3_ENABLED must be true if either media or static files are not served locally')
+
+if S3_ENABLED:
+    AWS_ACCESS_KEY_ID = env('BUCKETEER_AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = env('BUCKETEER_AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = env('BUCKETEER_BUCKET_NAME')
+    AWS_S3_REGION_NAME = env('BUCKETEER_AWS_REGION')
+    AWS_DEFAULT_ACL = None
+    AWS_S3_SIGNATURE_VERSION = env('S3_SIGNATURE_VERSION', default='s3v4')
+    AWS_S3_ENDPOINT_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
     AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
-    # static settings
-    AWS_LOCATION = 'static'
-    STATIC_URL = f'https://{AWS_S3_ENDPOINT_URL}/{AWS_LOCATION}/'
-    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-     # public media settings
-    PUBLIC_MEDIA_LOCATION = 'media'
-    MEDIA_URL = f'https://{AWS_S3_ENDPOINT_URL}/{PUBLIC_MEDIA_LOCATION}/'
-    DEFAULT_FILE_STORAGE = 'f1store.storage_backends.PublicMediaStorage'
-else:
-    STATIC_URL = '/static/'
-    STATIC_ROOT = BASE_DIR / 'staticfiles'
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = BASE_DIR / 'mediafiles'
 
-STATICFILES_DIRS = (BASE_DIR / 'static',)
+if not LOCAL_SERVE_STATIC_FILES:
+    STATIC_DEFAULT_ACL = 'public-read'
+    STATIC_LOCATION = 'static'
+    STATIC_URL = f'{AWS_S3_ENDPOINT_URL}/{STATIC_LOCATION}/'
+    STATICFILES_STORAGE = 'f1store.utils.storage_backends.StaticStorage'
+
+if not LOCAL_SERVE_MEDIA_FILES:
+    PUBLIC_MEDIA_DEFAULT_ACL = 'public-read'
+    PUBLIC_MEDIA_LOCATION = 'media/public'
+
+    MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/{PUBLIC_MEDIA_LOCATION}/'
+    DEFAULT_FILE_STORAGE = 'f1store.utils.storage_backends.PublicMediaStorage'
+
+    PRIVATE_MEDIA_DEFAULT_ACL = 'private'
+    PRIVATE_MEDIA_LOCATION = 'media/private'
+    PRIVATE_FILE_STORAGE = 'f1store.utils.storage_backends.PrivateMediaStorage'
+
+# Security settings
+SECURE_SSL_REDIRECT = env.bool('DJANGO_SECURE_SSL_REDIRECT', default=True)
+SECURE_HSTS_SECONDS = env.int("DJANGO_SECURE_HSTS_SECONDS", default=2592000) # Recommended 30 days
+SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool("DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS", default=True)
+SECURE_HSTS_PRELOAD = env.bool("DJANGO_SECURE_HSTS_PRELOAD", default=True)
+SESSION_COOKIE_SECURE = env.bool("DJANGO_SESSION_COOKIE_SECURE", default=True)
+CSRF_COOKIE_SECURE = env.bool("DJANGO_CSRF_COOKIE_SECURE", default=True)

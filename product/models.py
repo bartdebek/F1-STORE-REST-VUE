@@ -4,8 +4,6 @@ from PIL import Image
 from django.core.files import File
 from django.db import models
 
-from f1store.storage_backends import PublicMediaStorage
-
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
@@ -23,8 +21,8 @@ class Category(models.Model):
 
 class Team(models.Model):
     name = models.CharField(max_length=255)
-    image = models.ImageField(storage=PublicMediaStorage(), blank=True, null=True)
-    thumbnail = models.ImageField(storage=PublicMediaStorage(), blank=True, null=True)
+    image = models.ImageField(upload_to='images/team', blank=True, null=True)
+    thumbnail = models.ImageField(upload_to='images/team', blank=True, null=True)
     slug = models.SlugField()
 
     class Meta:
@@ -72,8 +70,8 @@ class Product(models.Model):
     slug = models.SlugField()
     description = models.TextField(blank=True, null=True)
     price = models.DecimalField(max_digits=6, decimal_places=2)
-    image = models.ImageField(storage=PublicMediaStorage(), blank=True, null=True)
-    thumbnail = models.ImageField(storage=PublicMediaStorage(), blank=True, null=True)
+    image = models.ImageField(upload_to='images/product', blank=True, null=True)
+    thumbnail = models.ImageField(upload_to='images/product', blank=True, null=True)
     date_added = models.DateTimeField(auto_now_add=True)
 
     class Meta:
