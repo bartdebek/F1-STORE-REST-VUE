@@ -155,8 +155,7 @@ REST_FRAMEWORK = {
 }
 
 STATIC_URL = 'staticfiles/'
-STATICFILES_DIRS = [BASE_DIR / 'staticfiles']
-STATIC_ROOT = BASE_DIR / 'static'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # The following configs determine if files get served from the server or an S3 storage
