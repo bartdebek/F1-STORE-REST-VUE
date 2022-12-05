@@ -64,13 +64,13 @@ CORS_ALLOWED_ORIGINS = [
     "https://sub.example.com",
     "http://localhost:8080",
     "http://127.0.0.1:9000",
-    "https://f1-store.netlify.app/",
+    "https://f1-store.netlify.app",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:9000",
-    "https://f1-store.netlify.app/",
+    "https://f1-store.netlify.app",
 ]
 
 MIDDLEWARE = [
@@ -154,9 +154,9 @@ REST_FRAMEWORK = {
     ),
 }
 
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_URL = 'staticfiles/'
+STATICFILES_DIRS = [BASE_DIR / 'staticfiles']
+STATIC_ROOT = BASE_DIR / 'static'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # The following configs determine if files get served from the server or an S3 storage
@@ -193,6 +193,8 @@ if not LOCAL_SERVE_MEDIA_FILES:
     PRIVATE_MEDIA_DEFAULT_ACL = 'private'
     PRIVATE_MEDIA_LOCATION = 'media/private'
     PRIVATE_FILE_STORAGE = 'f1store.utils.storage_backends.PrivateMediaStorage'
+else:
+    MEDIA_ROOT = BASE_DIR / 'images'
 
 # Security settings
 SECURE_SSL_REDIRECT = env.bool('DJANGO_SECURE_SSL_REDIRECT', default=True)

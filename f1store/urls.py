@@ -10,3 +10,9 @@ urlpatterns = [
     path('api/v1/', include('product.urls')),
     path('api/v1/', include('order.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.LOCAL_SERVE_STATIC_FILES:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+if settings.LOCAL_SERVE_MEDIA_FILES:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,11 +1,15 @@
 from django.http import Http404
 from django.db.models import Q
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.exceptions import ValidationError
+from rest_framework import status
 
-from .models import Category, Product, Team
-from .serializers import ProductSerializer, TeamSerializer, CategorySerializer
+from .models import Category, Product, Team, Review
+from .serializers import ProductSerializer, TeamSerializer, CategorySerializer, ReviewSerializer
 
 
 class LatestProductsListView(APIView):
@@ -70,3 +74,33 @@ def search(request):
         return Response(serializer.data)
     else:
         return Response({"products": []})
+
+
+class ReviewList(generics.ListCreateAPIView):
+    serializer_class = ReviewSerializer
+    model = Review
+
+    def get(self, request, product_slug):
+        queryset = Review.objects.filter(product__slug=product_slug)
+        serializer = ReviewSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    # def post(self, request, *args, **kwargs):
+    #     serializer = ReviewSerializer(data=request.data)
+    #     return self.create(request, *args, **kwargs)
+
+    def perform_create(self, serialize, product_slug):
+        product = Product.objects.get(slug=product_slug)
+        serializer = ReviewSerializer(product)
+        author = self.request.user
+        review_queryset = Review.objects.filter(product=product, author=author)
+
+        if review_queryset.exists():
+            raise ValidationError("This user has already added a review!")
+
+        serializer.save(product=product, author=author)
+
+
+class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer

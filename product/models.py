@@ -3,6 +3,7 @@ from PIL import Image
 
 from django.core.files import File
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Category(models.Model):
@@ -110,3 +111,17 @@ class Product(models.Model):
         thumbnail = File(thumb_io, name=self.image.name)
         return thumbnail
         
+
+class Review(models.Model):
+    product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name='review')
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    email = models.EmailField()
+    body = models.TextField()
+    created_on = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-created_on']
+
+    def __str__(self):
+        return f'Review {self.body} by {self.author.username}'
