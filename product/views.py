@@ -85,10 +85,6 @@ class ReviewList(generics.ListCreateAPIView):
         serializer = ReviewSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    # def post(self, request, *args, **kwargs):
-    #     serializer = ReviewSerializer(data=request.data)
-    #     return self.create(request, *args, **kwargs)
-
     def perform_create(self, serialize, product_slug):
         product = Product.objects.get(slug=product_slug)
         serializer = ReviewSerializer(product)
@@ -102,5 +98,15 @@ class ReviewList(generics.ListCreateAPIView):
 
 
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+    
+    def get_object(self, pk):
+        try:
+            return Review.objects.get(pk=pk)
+        except Review.DoesNotExist:
+            raise Http404
+    
+    def get(self, request, pk, format=None):
+        review = self.get_object(pk)
+        serializer = ReviewSerializer(review)
+        return Response(serializer.data)

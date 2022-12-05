@@ -8,7 +8,8 @@ from .views import (
     ProductDetailView, 
     CategoryView, 
     search, 
-    ReviewList
+    ReviewList,
+    ReviewDetail
 )
 
 urlpatterns = [
@@ -17,6 +18,7 @@ urlpatterns = [
     path('products/teams/', TeamsListView.as_view(), name='teams_list'),
     path('products/teams/<slug:team_slug>/', TeamsProductsView.as_view(), name='team_products'),
     path('reviews/<slug:product_slug>/', ReviewList.as_view(), name='review-list'),
+    path('reviews/detail/<int:pk>/', ReviewDetail.as_view(), name='review-detail'),
     path('products/<slug:category_slug>/<slug:product_slug>/', ProductDetailView.as_view(), name='product_detail'),
     path('products/<slug:category_slug>/', CategoryView.as_view(), name='category'),
 ]
