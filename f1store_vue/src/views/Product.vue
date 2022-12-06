@@ -25,6 +25,17 @@
                         <a class="button is-dark" @click="addToCart()">Add to cart</a>
                     </div>
                 </div>
+                <h2 class="subtitle">Reviews</h2>
+                <ul>
+                    <li v-for="review in reviews">
+                        <strong>{{ review.body }}</strong>
+                        <div class="is-size-7">
+                            {{ review.author_name }}<br>
+                            {{ review.time }}
+                        </div>
+                        <hr>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
@@ -40,11 +51,13 @@ export default {
     data() {
         return {
             product: {},
-            quantity: 1
+            quantity: 1,
+            reviews: []
         }
     },
     mounted() {
         this.getProduct()
+        this.getReviews()
     }, 
     methods: {
         async getProduct() {
@@ -54,7 +67,7 @@ export default {
             const product_slug = this.$route.params.product_slug
 
             await axios
-                .get(`api/v1/products/${category_slug}/${product_slug}`)
+                .get(`api/v1/products/${category_slug}/${product_slug}/`)
                 .then(response => {
                     this.product = response.data
                     document.title = this.product.name + ' | F1 Store'
@@ -82,7 +95,23 @@ export default {
                 duration: 4000,
                 position: 'bottom-right',
             })
-        }
+        },
+        async getReviews() {
+            this.$store.commit('setIsLoading', true)
+
+            const product_slug = this.$route.params.product_slug
+
+            await axios
+                .get(`api/v1/reviews/${product_slug}/`)
+                .then(response => {
+                    this.reviews = response.data
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+
+                this.$store.commit('setIsLoading', false)
+        },
     }
 }
 

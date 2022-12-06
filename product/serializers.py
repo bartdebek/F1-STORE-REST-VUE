@@ -43,10 +43,17 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    product_name = serializers.CharField(source='product.name', read_only=True)
+    author_name = serializers.CharField(source='author.username', read_only=True)
+    time = serializers.DateTimeField(source="created_on", format="%Y-%m-%d %H:%M:%S")
     class Meta:
         model = Review
         fields = [
             "id",
-            "email",
             "body",
+            "author",
+            "author_name",
+            "product",
+            "product_name",
+            "time"
         ]

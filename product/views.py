@@ -80,19 +80,20 @@ class ReviewList(generics.ListCreateAPIView):
     serializer_class = ReviewSerializer
     model = Review
 
-    def get(self, request, product_slug):
+    def get_queryset(self):
+        product_slug = self.kwargs['product_slug']
         queryset = Review.objects.filter(product__slug=product_slug)
-        serializer = ReviewSerializer(queryset, many=True)
-        return Response(serializer.data)
+        return queryset
 
-    def perform_create(self, serialize, product_slug):
+    def perform_create(self, serializer):
+        product_slug = self.kwargs['product_slug']
         product = Product.objects.get(slug=product_slug)
-        serializer = ReviewSerializer(product)
         author = self.request.user
         review_queryset = Review.objects.filter(product=product, author=author)
 
         if review_queryset.exists():
             raise ValidationError("This user has already added a review!")
+
 
         serializer.save(product=product, author=author)
 
