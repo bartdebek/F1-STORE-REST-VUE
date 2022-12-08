@@ -10,6 +10,7 @@ from rest_framework import status
 
 from .models import Category, Product, Team, Review
 from .serializers import ProductSerializer, TeamSerializer, CategorySerializer, ReviewSerializer
+from .permissions import IsReviewUserOrReadOnly
 
 
 class LatestProductsListView(APIView):
@@ -92,7 +93,7 @@ class ReviewList(generics.ListCreateAPIView):
         review_queryset = Review.objects.filter(product=product, author=author)
 
         if review_queryset.exists():
-            raise ValidationError("This user has already added a review!")
+            raise ValidationError("You have already added a review!")
 
 
         serializer.save(product=product, author=author)
@@ -100,14 +101,17 @@ class ReviewList(generics.ListCreateAPIView):
 
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ReviewSerializer
+    permission_classes = (IsReviewUserOrReadOnly,)
     
-    def get_object(self, pk):
+    def get_object(self):
+        pk = self.kwargs['pk']
         try:
             return Review.objects.get(pk=pk)
         except Review.DoesNotExist:
             raise Http404
     
     def get(self, request, pk, format=None):
+        pk = self.kwargs['pk']
         review = self.get_object(pk)
         serializer = ReviewSerializer(review)
         return Response(serializer.data)

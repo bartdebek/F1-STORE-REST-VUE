@@ -12,7 +12,7 @@
             </div>
 
             <div class="column is-3">
-                <h2 class="subtitle">Information</h2>
+                <h2 class="subtitle">Product available</h2>
 
                 <p><strong>Price: </strong>${{ product.price }}</p>
 
@@ -31,11 +31,37 @@
                         <strong>{{ review.body }}</strong>
                         <div class="is-size-7">
                             {{ review.author_name }}<br>
-                            {{ review.time }}
+                            {{ review.time }}<br>
                         </div>
                         <hr>
                     </li>
                 </ul>
+                <template v-if="$store.state.isAuthenticated">
+                <form v-on:submit.prevent="addReview">
+                    <div class="field">
+                        <label>Give us your opinion about the product</label>
+                        <div class="control">
+                            <textarea class="textarea" placeholder="Write a review" v-model="body">
+                            </textarea>
+                        </div>
+                    </div>
+
+                    <div class="notification is-danger" v-if="errors.length">
+                        <p v-for="error in errors" v-bind:key="error">{{ error }}</p>
+                    </div>
+
+                    <div class="field">
+                        <div class="control">
+                            <button class="button is-dark">Post</button>
+                        </div>
+                    </div>
+                </form>
+                </template>
+                <template v-else>
+                    <div class="field">
+                        <label>You need to be logged in to post a review.</label>
+                    </div>
+                </template>
             </div>
         </div>
     </div>
@@ -43,6 +69,7 @@
 
 <script>
 
+import { argumentPlaceholder } from '@babel/types'
 import axios from 'axios'
 import { toast } from 'bulma-toast'
 
@@ -52,7 +79,9 @@ export default {
         return {
             product: {},
             quantity: 1,
-            reviews: []
+            reviews: [],
+            body: '',
+            errors: []
         }
     },
     mounted() {
@@ -112,6 +141,71 @@ export default {
 
                 this.$store.commit('setIsLoading', false)
         },
+        async addReview() {
+            const formData = {
+                body: this.body
+            }
+            const product_slug = this.$route.params.product_slug
+            await axios
+                .post(`api/v1/reviews/${product_slug}/`, formData)
+                .then(
+                    response => {
+                        this.reviews.push(response.data),
+                        toast({
+                            message: 'Review added. Thank you!',
+                            type: 'is-success',
+                            dismissible: true,
+                            pauseOnHover: true,
+                            duration: 3000,
+                            position: 'bottom-right',
+                        })
+                        this.body = ""
+                    }
+                )
+                .catch(error => {
+                    if (error.response) {
+                        for (const property in error.response.data) {
+                            this.errors.push(`${error.response.data[property]}`)
+                        }
+                        this.body = ""
+                    } else {
+                        this.errors.push('Something went wrong. Please try again')
+                        this.body = ""
+                        console.log(JSON.stringify(error))
+                    }
+                })
+        },
+        async deleteReview(paramid) {
+            const item = {
+                pk: paramid,
+            }
+            await axios
+                .delete(`api/v1/reviews/detail/${paramid}/`, item)
+                .then(
+                    response => {
+                        toast({
+                            message: 'Review will be deleted!',
+                            type: 'is-success',
+                            dismissible: true,
+                            pauseOnHover: true,
+                            duration: 3000,
+                            position: 'bottom-right',
+                        })
+                    }
+                )
+                .catch(error => {
+                    if (error.response) {
+                        for (const property in error.response.data) {
+                            this.errors.push(`${error.response.data[property]}`)
+                        }
+                        this.body = ""
+                    } else {
+                        this.errors.push('Something went wrong. Please try again')
+                        this.body = ""
+                        console.log(JSON.stringify(error))
+                    }
+                })
+        }
     }
 }
 
