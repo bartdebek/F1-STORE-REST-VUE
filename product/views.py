@@ -6,11 +6,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
-from rest_framework import status
 
 from .models import Category, Product, Team, Review
 from .serializers import ProductSerializer, TeamSerializer, CategorySerializer, ReviewSerializer
-from .permissions import IsReviewUserOrReadOnly
+from .permissions import IsReviewUserOrReadOnly, IsAdmin
 
 
 class LatestProductsListView(APIView):
@@ -101,7 +100,7 @@ class ReviewList(generics.ListCreateAPIView):
 
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ReviewSerializer
-    permission_classes = (IsReviewUserOrReadOnly,)
+    permission_classes = (IsAdmin)
     
     def get_object(self):
         pk = self.kwargs['pk']

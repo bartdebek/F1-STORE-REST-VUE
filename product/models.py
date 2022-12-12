@@ -115,7 +115,7 @@ class Product(models.Model):
 class Review(models.Model):
     product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name='review')
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    body = models.TextField()
+    body = models.TextField(max_length=250)
     created_on = models.DateTimeField(auto_now_add=True)
     active = models.BooleanField(default=False)
 

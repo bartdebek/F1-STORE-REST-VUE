@@ -28,12 +28,17 @@
                 <h2 class="subtitle">Reviews</h2>
                 <ul>
                     <li v-for="review in reviews">
-                        <strong>{{ review.body }}</strong>
-                        <div class="is-size-7">
-                            {{ review.author_name }}<br>
-                            {{ review.time }}<br>
-                        </div>
-                        <hr>
+                        <template v-if="review.active==true">
+                            <strong>{{ review.body }}</strong>
+                            <div class="is-size-7">
+                                {{ review.author_name }}<br>
+                                {{ review.time }}<br>
+                                <!-- <div class="control">
+                                    <a class="button is-danger" @click="deleteReview(review.id)">Delete review</a>
+                                </div> -->
+                            </div>
+                            <hr>
+                        </template>
                     </li>
                 </ul>
                 <template v-if="$store.state.isAuthenticated">
@@ -66,10 +71,8 @@
         </div>
     </div>
 </template>
-
 <script>
 
-import { argumentPlaceholder } from '@babel/types'
 import axios from 'axios'
 import { toast } from 'bulma-toast'
 
@@ -152,7 +155,7 @@ export default {
                     response => {
                         this.reviews.push(response.data),
                         toast({
-                            message: 'Review added. Thank you!',
+                            message: 'Review will be added after verification. Thank you!',
                             type: 'is-success',
                             dismissible: true,
                             pauseOnHover: true,
@@ -178,13 +181,15 @@ export default {
         async deleteReview(paramid) {
             const item = {
                 pk: paramid,
-            }
+            };
             await axios
                 .delete(`api/v1/reviews/detail/${paramid}/`, item)
                 .then(
                     response => {
+                        this.reviews = this.reviews.filter(review => review.id !== paramid);
+                        this.$forceUpdate();
                         toast({
-                            message: 'Review will be deleted!',
+                            message: 'Review has been deleted!',
                             type: 'is-success',
                             dismissible: true,
                             pauseOnHover: true,

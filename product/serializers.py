@@ -13,7 +13,9 @@ class ProductSerializer(serializers.ModelSerializer):
             "description",
             "price",
             "get_image",
-            "get_thumbnail"
+            "get_thumbnail",
+            "category",
+            "team"
         ]
 
 
@@ -55,6 +57,7 @@ class ReviewSerializer(serializers.ModelSerializer):
             "author_name",
             "product",
             "product_name",
-            "time"
+            "time",
+            "active"
         ]
         read_only_fields = ['author', 'product']
