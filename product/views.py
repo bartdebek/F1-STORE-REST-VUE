@@ -1,11 +1,15 @@
 from django.http import Http404
 from django.db.models import Q
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.exceptions import ValidationError
 
-from .models import Category, Product, Team
-from .serializers import ProductSerializer, TeamSerializer, CategorySerializer
+from .models import Category, Product, Team, Review
+from .serializers import ProductSerializer, TeamSerializer, CategorySerializer, ReviewSerializer
+from .permissions import IsReviewUserOrReadOnly, IsAdmin
 
 
 class LatestProductsListView(APIView):
@@ -70,3 +74,43 @@ def search(request):
         return Response(serializer.data)
     else:
         return Response({"products": []})
+
+
+class ReviewList(generics.ListCreateAPIView):
+    serializer_class = ReviewSerializer
+    model = Review
+
+    def get_queryset(self):
+        product_slug = self.kwargs['product_slug']
+        queryset = Review.objects.filter(product__slug=product_slug)
+        return queryset
+
+    def perform_create(self, serializer):
+        product_slug = self.kwargs['product_slug']
+        product = Product.objects.get(slug=product_slug)
+        author = self.request.user
+        review_queryset = Review.objects.filter(product=product, author=author)
+
+        if review_queryset.exists():
+            raise ValidationError("You have already added a review!")
+
+
+        serializer.save(product=product, author=author)
+
+
+class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = ReviewSerializer
+    permission_classes = (IsAdmin)
+    
+    def get_object(self):
+        pk = self.kwargs['pk']
+        try:
+            return Review.objects.get(pk=pk)
+        except Review.DoesNotExist:
+            raise Http404
+    
+    def get(self, request, pk, format=None):
+        pk = self.kwargs['pk']
+        review = self.get_object(pk)
+        serializer = ReviewSerializer(review)
+        return Response(serializer.data)

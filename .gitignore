@@ -8,6 +8,7 @@ node_modules
 /media
 docker-compose-prod.yml
 /images
+/migrations
 
 
 # local env files
