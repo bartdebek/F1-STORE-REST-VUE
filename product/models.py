@@ -4,11 +4,12 @@ from PIL import Image
 from django.core.files import File
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.text import slugify
 
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
-    slug = models.SlugField()
+    slug = models.SlugField(max_length=255, allow_unicode=True, blank=True)
 
     class Meta:
         ordering = ('name',)
@@ -19,12 +20,18 @@ class Category(models.Model):
     def get_absolute_url(self):
         return f'/{self.slug}/'
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.slug = slugify(self.name)
+
+        super(Category, self).save(*args, **kwargs)
+
 
 class Team(models.Model):
     name = models.CharField(max_length=255)
     image = models.ImageField(upload_to='images/team', blank=True, null=True)
     thumbnail = models.ImageField(upload_to='images/team', blank=True, null=True)
-    slug = models.SlugField()
+    slug = models.SlugField(max_length=255, allow_unicode=True, blank=True)
 
     class Meta:
         ordering = ('name',)
@@ -52,7 +59,7 @@ class Team(models.Model):
             else:
                 return ''
 
-    def make_thumbnail(self, image, heigth=200):
+    def make_thumbnail(self, image, heigth=400):
         img = Image.open(self.image)
         hpercent = (heigth/float(img.size[1]))
         wsize = int((float(img.size[0])*float(hpercent)))
@@ -62,13 +69,19 @@ class Team(models.Model):
         thumbnail = File(thumb_io, name=self.image.name)
         return thumbnail
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.slug = slugify(self.name)
+
+        super(Team, self).save(*args, **kwargs)
+
 
 
 class Product(models.Model):
     category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True, blank=True)
-    slug = models.SlugField()
+    slug = models.SlugField(max_length=255, allow_unicode=True, blank=True)
     description = models.TextField(blank=True, null=True)
     price = models.DecimalField(max_digits=6, decimal_places=2)
     image = models.ImageField(upload_to='images/product', blank=True, null=True)
@@ -101,7 +114,13 @@ class Product(models.Model):
             else:
                 return ''
 
-    def make_thumbnail(self, image, heigth=200):
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.slug = slugify(self.name)
+
+        super(Product, self).save(*args, **kwargs)
+
+    def make_thumbnail(self, image, heigth=400):
         img = Image.open(self.image)
         hpercent = (heigth/float(img.size[1]))
         wsize = int((float(img.size[0])*float(hpercent)))
