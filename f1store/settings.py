@@ -154,7 +154,8 @@ REST_FRAMEWORK = {
     ),
 }
 
-STATIC_URL = 'staticfiles/'
+STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
@@ -192,8 +193,6 @@ if not LOCAL_SERVE_MEDIA_FILES:
     PRIVATE_MEDIA_DEFAULT_ACL = 'private'
     PRIVATE_MEDIA_LOCATION = 'media/private'
     PRIVATE_FILE_STORAGE = 'f1store.utils.storage_backends.PrivateMediaStorage'
-else:
-    MEDIA_ROOT = BASE_DIR / 'images'
 
 # Security settings
 SECURE_SSL_REDIRECT = env.bool('DJANGO_SECURE_SSL_REDIRECT', default=True)
