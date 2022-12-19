@@ -18,7 +18,7 @@
 
       <div class="navbar-menu" id="navbar-menu" v-bind:class="{'is-active': showMobileMenu }">
         <div class="navbar-end">
-          <!-- <div class="navbar-item">
+          <div class="navbar-item">
             <form method="get" action="/search">
               <div class="field has-addons">
                 <div class="control">
@@ -34,7 +34,7 @@
                 </div>
               </div>
             </form>
-          </div> -->
+          </div>
           <router-link to="/clothing" class="navbar-item"><strong>Clothing</strong></router-link>
           <router-link to="/accessories" class="navbar-item"><strong>Accessories</strong></router-link>
           <router-link to="/teams" class="navbar-item"><strong>Shop by Team</strong></router-link>

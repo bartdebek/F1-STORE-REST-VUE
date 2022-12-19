@@ -2,3 +2,8 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+[[redirects]]
+  from = "/search"
+  to = "https://f1-store.herokuapp.com/api/v1/products/search/"
+  status = 200
