@@ -13,7 +13,18 @@ from .permissions import IsReviewUserOrReadOnly, IsAdmin
 
 
 class LatestProductsListView(APIView):
+    """
+    Display a list of 4 latest :model:`product.Product` instances.
 
+    **Context**
+
+    ``products``
+        A list of 4 latest :model:`product.Product` instances.
+
+    **Serializer**
+
+    ``ProductSerializer``
+    """
     def get(self, request, format=None):
         products = Product.objects.all()[0:4]
         serializer = ProductSerializer(products, many=True)
@@ -21,7 +32,18 @@ class LatestProductsListView(APIView):
 
 
 class TeamsListView(APIView):
+    """
+    Display a list of instances :model:`product.Team`
 
+    **Context**
+
+    ``teams``
+        A list of instances :model:`product.Team`.
+
+    **Serializer**
+
+    ``TeamSerializer``
+    """
     def get(self, request, format=None):
         teams = Team.objects.all()
         serializer = TeamSerializer(teams, many=True)
@@ -29,21 +51,45 @@ class TeamsListView(APIView):
 
 
 class TeamsProductsView(APIView):
+    """
+    Display a list of instances :model:`product.Product`
+    related to specific :model:`product.Team`.
 
+    **Context**
+
+    ``products``
+        Display a list of instances :model:`product.Product`
+        related to specific :model:`product.Team`.
+
+    **Serializer**
+
+    ``ProductSerializer``
+    """
     def get(self, request, team_slug, format=None):
         products = Product.objects.filter(team__slug=team_slug)
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
-        
+
 
 class ProductDetailView(APIView):
+    """
+    Display an individual :model:`product.Product`.
 
+    **Context**
+
+    ``product``
+        An instance of :model:`product.Product`.
+
+    **Serializer**
+
+    ``ProductSerializer``
+    """
     def get_object(self, category_slug, product_slug):
         try:
             return Product.objects.filter(category__slug=category_slug).get(slug=product_slug)
         except Product.DoesNotExist:
             raise Http404
-    
+
     def get(self, request, category_slug, product_slug, format=None):
         product = self.get_object(category_slug, product_slug)
         serializer = ProductSerializer(product)
@@ -51,7 +97,20 @@ class ProductDetailView(APIView):
 
 
 class CategoryView(APIView):
+    """
+    Display a list of instances :model:`product.Product`
+    related to specific :model:`product.Category`.
 
+    **Context**
+
+    ``category``
+        A list of instances :model:`product.Product`
+        related to specific :model:`product.Category`.
+
+    **Serializer**
+
+    ``CategorySerializer``
+    """
     def get_object(self, category_slug):
         try:
             return Category.objects.get(slug=category_slug)
@@ -66,6 +125,21 @@ class CategoryView(APIView):
 
 @api_view(['POST'])
 def search(request):
+    """
+    Post a keyword query and get related instances of
+    :model:`product.Product`.
+
+    **query**
+
+    ``products``
+        A list of instances :model:`product.Product`
+        containing posted keyoword (in name or
+        any relation).
+
+    **Serializer**
+
+    ``ProductSerializer``
+    """
     query = request.data.get('query', '')
 
     if query:
@@ -77,6 +151,23 @@ def search(request):
 
 
 class ReviewList(generics.ListCreateAPIView):
+    """
+    POST method: Create an instance of :model:`product.Review`
+    related to specific instance of :model:`product.Product`.
+
+    GET method: Display list of :model:`product.Review` instances
+    related to specific instance of :model:`product.Product`.
+
+    **query**
+
+    ``reviews``
+        A list of instances of :model:`product.Review`
+        related to specific :mode:`product.Product`.
+
+    **Serializer**
+
+    ``ReviewSerializer``
+    """
     serializer_class = ReviewSerializer
     model = Review
 
@@ -94,21 +185,36 @@ class ReviewList(generics.ListCreateAPIView):
         if review_queryset.exists():
             raise ValidationError("You have already added a review!")
 
-
         serializer.save(product=product, author=author)
 
 
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    PUT method: Update an instance of :model:`product.Review`.
+
+    GET method: Display instance of :model:`product.Review`.
+
+    DELETE method: Delete instance of :model:`product.Review`.
+
+    **query**
+
+    ``review``
+        An instance of :model:`product.Review`.
+
+    **Serializer**
+
+    ``ReviewSerializer``
+    """
     serializer_class = ReviewSerializer
     permission_classes = (IsAdmin)
-    
+
     def get_object(self):
         pk = self.kwargs['pk']
         try:
             return Review.objects.get(pk=pk)
         except Review.DoesNotExist:
             raise Http404
-    
+
     def get(self, request, pk, format=None):
         pk = self.kwargs['pk']
         review = self.get_object(pk)
