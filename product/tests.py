@@ -9,7 +9,6 @@ from rest_framework.test import force_authenticate, APIClient
 
 from .models import Product, Team, Category, Review
 
-# Create your tests here.
 
 class APITests(TestCase):
 
@@ -20,30 +19,30 @@ class APITests(TestCase):
         """
         cls.user = User.objects.create(
             id=1,
-            username = "testuser",
-            password = "testpassword"
+            username="testuser",
+            password="testpassword"
         )
         cls.category = Category.objects.create(
-            name = "Clothing",
-            slug = "clothing"
+            name="Clothing",
+            slug="clothing"
         )
         cls.team = Team.objects.create(
-            name = "Torro Rosso",
-            slug = "torro-rosso"
+            name="Torro Rosso",
+            slug="torro-rosso"
         )
         cls.product = Product.objects.create(
-            name = "TestProduct",
-            slug = "test-product",
-            category = cls.category,
-            team = cls.team,
-            price = 50
+            name="TestProduct",
+            slug="test-product",
+            category=cls.category,
+            team=cls.team,
+            price=50
         )
         cls.review = Review.objects.create(
-            body = "Test review",
-            product = cls.product,
-            author = User.objects.get(username='testuser')
+            body="Test review",
+            product=cls.product,
+            author=User.objects.get(username='testuser')
         )
-    
+
     def setUp(self):
         self.relative_path = '/api/v1/'
 

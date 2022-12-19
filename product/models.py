@@ -8,6 +8,10 @@ from django.utils.text import slugify
 
 
 class Category(models.Model):
+    """
+    Stores a product category that has a foreign key relation to
+    Product class.
+    """
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, allow_unicode=True, blank=True)
 
@@ -21,6 +25,7 @@ class Category(models.Model):
         return f'/{self.slug}/'
 
     def save(self, *args, **kwargs):
+        """Automatically creaetes slug from entered name."""
         if not self.id:
             self.slug = slugify(self.name)
 
@@ -28,6 +33,9 @@ class Category(models.Model):
 
 
 class Team(models.Model):
+    """
+    Stores a F1 team that has a foreign key relation to Product class.
+    """
     name = models.CharField(max_length=255)
     image = models.ImageField(upload_to='images/team', blank=True, null=True)
     thumbnail = models.ImageField(upload_to='images/team', blank=True, null=True)
@@ -43,12 +51,14 @@ class Team(models.Model):
         return f'/teams/{self.slug}/'
 
     def get_image(self):
+        "Returns url to full size team logo."
         if self.image:
             return self.image.url
         else:
             return ''
 
     def get_thumbnail(self):
+        "Returns url to team logo thumbnail."
         if self.thumbnail:
             return self.thumbnail.url
         else:
@@ -60,24 +70,29 @@ class Team(models.Model):
                 return ''
 
     def make_thumbnail(self, image, heigth=400):
+        "Creates team logo thumbnail from given picture."
         img = Image.open(self.image)
         hpercent = (heigth/float(img.size[1]))
         wsize = int((float(img.size[0])*float(hpercent)))
-        img = img.resize((wsize,heigth), Image.Resampling.LANCZOS)
+
+        img = img.resize((wsize, heigth), Image.Resampling.LANCZOS)
         thumb_io = BytesIO()
         img.save(thumb_io, 'JPEG')
         thumbnail = File(thumb_io, name=self.image.name)
         return thumbnail
 
     def save(self, *args, **kwargs):
+        """Automatically creaetes slug from entered name."""
         if not self.id:
             self.slug = slugify(self.name)
 
         super(Team, self).save(*args, **kwargs)
 
 
-
 class Product(models.Model):
+    """
+    Stores a single product, related to :model:`Category` and :model:`Team`.
+    """
     category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True, blank=True)
@@ -98,12 +113,14 @@ class Product(models.Model):
         return f'/{self.category.slug}/{self.slug}/'
 
     def get_image(self):
+        "Returns url to full size team logo."
         if self.image:
             return self.image.url
         else:
             return ''
 
     def get_thumbnail(self):
+        "Returns url to team logo thumbnail."
         if self.thumbnail:
             return self.thumbnail.url
         else:
@@ -115,24 +132,29 @@ class Product(models.Model):
                 return ''
 
     def save(self, *args, **kwargs):
+        """Automatically creaetes slug from entered name."""
         if not self.id:
             self.slug = slugify(self.name)
 
         super(Product, self).save(*args, **kwargs)
 
     def make_thumbnail(self, image, heigth=400):
+        "Creates team logo thumbnail from given picture."
         img = Image.open(self.image)
         hpercent = (heigth/float(img.size[1]))
         wsize = int((float(img.size[0])*float(hpercent)))
-        img = img.resize((wsize,heigth), Image.Resampling.LANCZOS)
+        img = img.resize((wsize, heigth), Image.Resampling.LANCZOS)
         thumb_io = BytesIO()
         img.save(thumb_io, 'JPEG')
         thumbnail = File(thumb_io, name=self.image.name)
         return thumbnail
-        
+
 
 class Review(models.Model):
-    product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name='review')
+    """
+    Stores a single review entry, related to Product and Author models.
+    """
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='review')
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     body = models.TextField(max_length=250)
     created_on = models.DateTimeField(auto_now_add=True)

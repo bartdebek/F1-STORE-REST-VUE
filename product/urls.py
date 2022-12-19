@@ -1,13 +1,13 @@
 from django.urls import path, include
 
 from .views import (
-    LatestProductsListView, 
-    TeamsProductsView, 
-    TeamsListView, 
-    TeamsProductsView, 
-    ProductDetailView, 
-    CategoryView, 
-    search, 
+    LatestProductsListView,
+    TeamsProductsView,
+    TeamsListView,
+    TeamsProductsView,
+    ProductDetailView,
+    CategoryView,
+    search,
     ReviewList,
     ReviewDetail
 )

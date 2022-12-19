@@ -3,7 +3,8 @@
     <meta charset="utf-8">
     <link rel="shortcut icon" type="image/png" href="favicon.png"/>
   </head>
-
+  
+<!-- Navbar -->
   <div id="wrapper">
     <nav class="navbar is-dark">
       <div class="navbar-brand">
@@ -15,7 +16,6 @@
           <span aria-hidden="true"></span>
         </a>
       </div>
-
       <div class="navbar-menu" id="navbar-menu" v-bind:class="{'is-active': showMobileMenu }">
         <div class="navbar-end">
           <div class="navbar-item">

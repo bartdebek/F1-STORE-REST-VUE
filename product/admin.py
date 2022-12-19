@@ -7,13 +7,16 @@ from .models import Category, Team, Product, Review
 class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
 
+
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
 
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
+
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):

@@ -9,6 +9,7 @@ class IsReviewUserOrReadOnly(permissions.BasePermission):
         else:
             return obj.author == request.user or request.user.is_staff
 
+
 class IsAdmin(permissions.BasePermission):
 
     def has_object_permission(self, request, view):
