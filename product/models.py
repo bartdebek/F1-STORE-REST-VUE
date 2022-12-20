@@ -91,7 +91,7 @@ class Team(models.Model):
 
 class Product(models.Model):
     """
-    Stores a single product, related to :model:`Category` and :model:`Team`.
+    Stores a single product instance, related to :model:`Category` and :model:`Team`.
     """
     category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
