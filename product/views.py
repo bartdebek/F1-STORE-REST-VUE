@@ -45,7 +45,7 @@ class TeamsListView(APIView):
     ``TeamSerializer``
     """
     def get(self, request, format=None):
-        teams = Team.objects.all()
+        teams = Team.objects.order_by('name')
         serializer = TeamSerializer(teams, many=True)
         return Response(serializer.data)
 
