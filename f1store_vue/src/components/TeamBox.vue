@@ -2,7 +2,7 @@
     <div class="column is-3">
         <div class="box">
           <router-link v-bind:to="team.get_absolute_url">
-            <figure class="image mb-4">
+            <figure class="image mb-4 is-5by3">
                 <img v-bind:src="team.get_thumbnail">
             </figure>
           </router-link>
@@ -25,6 +25,5 @@ export default {
     margin-top: -1.25rem;
     margin-left: -1.25rem;
     margin-right: -1.25rem;
-    max-height: 100px;
   }
 </style>
