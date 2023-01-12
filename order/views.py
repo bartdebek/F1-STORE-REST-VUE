@@ -12,6 +12,7 @@ from rest_framework.response import Response
 
 from .models import Order, OrderItem
 from .serializers import OrderSerializer, MyOrderSerializer
+from .utils import send_email_confirmation
 
 
 @api_view(['POST'])
@@ -36,16 +37,26 @@ def checkout(request):
     if serializer.is_valid():
         stripe.api_key = settings.STRIPE_SECRET_KEY
         paid_amount = sum(item.get('quantity') * item.get('product').price for item in serializer.validated_data['items'])
+        
 
         try:
             charge = stripe.Charge.create(
                 amount=int(paid_amount * 100),
                 currency='USD',
-                description='Charge from Djackets',
+                description='Charge from F1 store',
                 source=serializer.validated_data['stripe_token']
             )
 
             serializer.save(user=request.user, paid_amount=paid_amount)
+
+            # Order data to be passed to confirmation email.
+            items = serializer.validated_data['items']
+            to = serializer.validated_data['email']
+            first_name = serializer.validated_data['first_name']
+            last_name = serializer.validated_data['last_name']
+
+            # Function to send email summary to the customer
+            send_email_confirmation(paid_amount, to, items, first_name, last_name)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception:
