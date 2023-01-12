@@ -15,6 +15,7 @@ Basic functionalities:
 - Logged in users can add items to cart and make a purchase (payment handled by 
 Stripe, actual payment is not being done but using real Credit Card information is
 highly discuraged!),
+- Customers receive order confirmation on given email address. It contains list of ordered items and total value.
 - Orders history is stored in account information,
 - It is possible to browse items based on category and team,
 - Logged in user can add reviews (1 per item),
