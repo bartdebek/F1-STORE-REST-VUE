@@ -4,6 +4,9 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.http import Http404
 from django.shortcuts import render
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_headers
 
 from rest_framework import status, authentication, permissions
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -82,6 +85,8 @@ class OrdersList(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
+    @method_decorator(cache_page(60*60*2))
+    @method_decorator(vary_on_headers("Authorization",))
     def get(self, request, format=None):
         orders = Order.objects.filter(user=request.user)
         serializer = MyOrderSerializer(orders, many=True)

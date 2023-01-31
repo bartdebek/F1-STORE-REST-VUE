@@ -30,7 +30,6 @@ class LatestProductsListView(APIView):
     ``ProductSerializer``
     """
     @method_decorator(cache_page(60*60*2))
-    @method_decorator(vary_on_headers("Authorization",))
     def get(self, request, format=None):
         products = Product.objects.all()[0:4]
         serializer = ProductSerializer(products, many=True)
@@ -50,6 +49,7 @@ class TeamsListView(APIView):
 
     ``TeamSerializer``
     """
+    @method_decorator(cache_page(60*60*2))
     def get(self, request, format=None):
         teams = Team.objects.order_by('name')
         serializer = TeamSerializer(teams, many=True)
@@ -71,6 +71,7 @@ class TeamsProductsView(APIView):
 
     ``ProductSerializer``
     """
+    @method_decorator(cache_page(60*60*2))
     def get(self, request, team_slug, format=None):
         products = Product.objects.filter(team__slug=team_slug)
         serializer = ProductSerializer(products, many=True)
@@ -97,7 +98,6 @@ class ProductDetailView(APIView):
             raise Http404
 
     @method_decorator(cache_page(60*60*2))
-    @method_decorator(vary_on_headers("Authorization",))
     def get(self, request, category_slug, product_slug, format=None):
         product = self.get_object(category_slug, product_slug)
         serializer = ProductSerializer(product)
@@ -125,6 +125,7 @@ class CategoryView(APIView):
         except Product.DoesNotExist:
             raise Http404
 
+    @method_decorator(cache_page(60*60*2))
     def get(self, request, category_slug, format=None):
         category = self.get_object(category_slug)
         serializer = CategorySerializer(category)
@@ -179,6 +180,7 @@ class ReviewList(generics.ListCreateAPIView):
     serializer_class = ReviewSerializer
     model = Review
 
+    @method_decorator(cache_page(60*60*2))
     def get_queryset(self):
         product_slug = self.kwargs['product_slug']
         queryset = Review.objects.filter(product__slug=product_slug)
