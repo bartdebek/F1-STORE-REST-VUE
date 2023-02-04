@@ -99,7 +99,7 @@ export default {
             const product_slug = this.$route.params.product_slug
 
             await axios
-                .get(`api/v1/products/${category_slug}/${product_slug}/`)
+                .get(`products/${category_slug}/${product_slug}/`)
                 .then(response => {
                     this.product = response.data
                     document.title = this.product.name + ' | F1 Store'
@@ -134,7 +134,7 @@ export default {
             const product_slug = this.$route.params.product_slug
 
             await axios
-                .get(`api/v1/reviews/${product_slug}/`)
+                .get(`reviews/${product_slug}/`)
                 .then(response => {
                     this.reviews = response.data
                 })
@@ -150,7 +150,7 @@ export default {
             }
             const product_slug = this.$route.params.product_slug
             await axios
-                .post(`api/v1/reviews/${product_slug}/`, formData)
+                .post(`reviews/${product_slug}/`, formData)
                 .then(
                     response => {
                         this.reviews.push(response.data),
@@ -183,7 +183,7 @@ export default {
                 pk: paramid,
             };
             await axios
-                .delete(`api/v1/reviews/detail/${paramid}/`, item)
+                .delete(`reviews/detail/${paramid}/`, item)
                 .then(
                     response => {
                         this.reviews = this.reviews.filter(review => review.id !== paramid);

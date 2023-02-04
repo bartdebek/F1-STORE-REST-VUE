@@ -40,7 +40,7 @@ export default {
         async performSearch() {
             this.$store.commit('setIsLoading', true)
             await axios
-                .post('api/v1/products/search/', {'query': this.query})
+                .post('products/search/', {'query': this.query})
                 .then(response => {
                     this.products = response.data
                 })

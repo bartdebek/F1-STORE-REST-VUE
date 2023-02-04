@@ -61,7 +61,7 @@ export default {
                 password: this.password
             }
             await axios
-                .post("api/v1/token/login/", formData)
+                .post("token/login/", formData)
                 .then(response => {
                     const token = response.data.auth_token
                     this.$store.commit('setToken', token)
@@ -74,7 +74,7 @@ export default {
                 .catch(error => {
                     if (error.response) {
                         for (const property in error.response.data) {
-                            this.errors.push(`${property}: ${error.response.data[property]}`)
+                            this.errors.push(`${error.response.data[property]}`)
                         }
                     } else {
                         this.errors.push('Something went wrong. Please try again')

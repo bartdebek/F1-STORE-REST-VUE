@@ -1,9 +1,6 @@
 import stripe
 
 from django.conf import settings
-from django.contrib.auth.models import User
-from django.http import Http404
-from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.decorators.vary import vary_on_headers
@@ -13,7 +10,7 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .models import Order, OrderItem
+from .models import Order
 from .serializers import OrderSerializer, MyOrderSerializer
 from .utils import send_email_confirmation
 
