@@ -180,7 +180,6 @@ class ReviewList(generics.ListCreateAPIView):
     serializer_class = ReviewSerializer
     model = Review
 
-    @method_decorator(cache_page(60*60*2))
     def get_queryset(self):
         product_slug = self.kwargs['product_slug']
         queryset = Review.objects.filter(product__slug=product_slug)

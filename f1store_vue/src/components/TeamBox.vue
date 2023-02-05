@@ -2,7 +2,7 @@
     <div class="column is-3">
         <div class="box">
           <router-link v-bind:to="team.get_absolute_url">
-            <figure class="image mb-4 is-5by3">
+            <figure class="image mb-4">
                 <img v-bind:src="team.get_thumbnail">
             </figure>
           </router-link>
