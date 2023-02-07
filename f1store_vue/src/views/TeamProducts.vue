@@ -2,8 +2,12 @@
     <div class="page-category">
         <div class="columns is-multiline">
             <div class="column is-12">
-                <h2 v-if="teamProducts.length===1" class="is-size-2 has-text-centered">{{ teamProducts.length }} Product</h2>
-                <h2 v-else class="is-size-2 has-text-centered">{{ teamProducts.length }} Products</h2>
+                <div class="container">
+                    <figure class="image is-centered">
+                        <img class="is-centered" v-bind:src="teamLogo">
+                    </figure>
+                    <router-link to="/teams" class="button is-dark is-small mt-4">Back to all teams</router-link>
+                </div>
             </div>
 
             <ProductBox 
@@ -28,8 +32,33 @@ export default {
     },
     data() {
         return {
-            teamProducts: []
+            teamProducts: [],
+            teamId: '',
+            teamName: '',
+            teamLogo: ''
         }
+    },
+    async created() {
+        // Getting team name from slug
+        const teamSlug = this.$route.params.team_slug
+        axios
+        .get(`products/teams/${teamSlug}/`)
+        .then(response => {
+            this.teamId = response.data[0].team;
+        });
+
+        axios
+        .get(`products/teams/`)
+        .then(response => {
+            let responseData = response.data
+            responseData.forEach(team => {
+                if (team.id == this.teamId) {
+                    this.teamName = team.name;
+                    this.teamLogo = team.get_thumbnail;
+                }
+            });
+        });
+
     },
     mounted() {
         this.getTeamProducts()
@@ -49,7 +78,7 @@ export default {
                 .get(`products/teams/${teamSlug}/`)
                 .then(response => {
                     this.teamProducts = response.data
-                    document.title = teamSlug + ' | F1 Store'
+                    document.title = this.teamName + ' | F1 Store'
                 })
                 .catch(error => {
                     console.log(error)
@@ -67,3 +96,16 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+  .image {
+    height: 256px;
+    width: 256px;
+  }
+</style>
