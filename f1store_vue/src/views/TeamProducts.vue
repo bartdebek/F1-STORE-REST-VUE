@@ -41,13 +41,13 @@ export default {
     async created() {
         // Getting team name from slug
         const teamSlug = this.$route.params.team_slug
-        axios
+        await axios
         .get(`products/teams/${teamSlug}/`)
         .then(response => {
             this.teamId = response.data[0].team;
         });
 
-        axios
+        await axios
         .get(`products/teams/`)
         .then(response => {
             let responseData = response.data
