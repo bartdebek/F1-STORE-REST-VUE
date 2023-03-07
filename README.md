@@ -4,10 +4,6 @@
 This is a project of e-commerce store created with Django REST Framework on the backend
 and Vue.JS on the frontend.
 
-# Live demo 
-
-Live demo: https://f1-store.netlify.app/
-
 # Functionality
 
 Basic functionalities:
